@@ -1,35 +1,54 @@
 import React, { useEffect, useState } from 'react';
-import {
-    Alert, Container, Card, CardImg, CardText,
-    CardBody, CardTitle
-} from 'reactstrap';
+import { Alert, Container, Card } from 'react-bootstrap';
 
 import './styles.css';
 
 import { api } from '../../config';
 import ModalComponent from '../../components/ModalComponent';
-import axios from 'axios';
 
 const Home = () => {
 
     const [title, setTitle] = useState("");
     const [data, setData] = useState([]);
+    const [dataLoad, setDataLoad] = useState(false);
     const [status, setStatus] = useState({
         type: '',
         mensagem: ''
     });
 
-    const getImage = (url) => {
-        axios.get(url).then(img => true).catch(() => false);
-    }
+    useEffect(()=>{
+        getMovies();
+    }, [title]);
 
-    const getMovies = (e) => {
-        setTitle(e.target.value);
-        if (title.trim().length > 0) {
+    useEffect(() => {
+        setStatus({ type: '', mensagem: ''});
+        setTimeout(() => {
+            if (dataLoad & data.length === 0) {
+                setStatus({ type: 'error', mensagem: 'Erro: Filme Não Encontrado!'});
+            } else {
+                setStatus({ type: '', mensagem: ''});
+            }
+        }, 2000);
+    }, [data, title])
+
+    const getMovies = () => {
+        if (title.trim().length <= 0) {
+            api.get(`/3/movie/popular?language=en-US&page=1`)
+                .then(({ data }) => {
+                    setData(data.results);
+                })
+                .catch(() => {
+                    setStatus({
+                        type: 'error',
+                        mensagem: 'Erro: tente mais tarde!'
+                })
+            });
+        } else {
             api.get(`/3/search/movie?query=${title}`)
                 .then(({ data }) => {
                     setData(data.results);
                 })
+                .then(setDataLoad(true))
                 .catch(() => {
                     setStatus({
                         type: 'error',
@@ -42,9 +61,9 @@ const Home = () => {
     return (
         <>
             <div>
-                <div>
-                    <input onChange={e => getMovies(e)} value={title}/>
-                </div>
+                <Container>
+                    <input onChange={e => setTitle(e.target.value)} value={title} className="input-search"/>
+                </Container>
                 {status.type === 'error' ? <Alert color="danger">{status.mensagem}</Alert> : ""}
                 {data.length <= 0 && status.type === ""
                     ?
@@ -55,15 +74,14 @@ const Home = () => {
                     <Container>
                         {data.map(movie => (
                             <Card key={movie.id} className="card">
-                                <CardImg className="img-movie" src={ `https://image.tmdb.org/t/p/w300${movie.poster_path}` }
+                                <Card.Img className="img-movie" src={ `https://image.tmdb.org/t/p/w200/${movie.poster_path}` }
                                     alt={`Image movie ${movie.title}`} />
-                                <CardBody className="card-body">
-                                    <CardTitle tag="h5">{movie.title}</CardTitle>
-                                    <CardText>Data de lançamento: {movie.release_date}</CardText>
+                                <Card.Body className="card-body">
+                                    <Card.Title tag="h5" className="titleMovieList">{movie.title}</Card.Title>
+                                    <Card.Text>Data de lançamento: {movie.release_date}</Card.Text>
                                     <div className="btn-container">
                                         <ModalComponent
                                             buttonLabel="More"
-                                            className="btn btn-light btn-outline-danger"
                                             movieModal={{
                                                 title: movie.title,
                                                 overview: movie.overview,
@@ -71,7 +89,7 @@ const Home = () => {
                                             }}
                                         />
                                     </div>
-                                </CardBody>
+                                </Card.Body>
                             </Card>
                         ))}
 
