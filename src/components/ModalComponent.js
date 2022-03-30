@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Button , Modal } from 'react-bootstrap'
 
+import "./style.css";
+
 const ModalComponent = (props) => {
 
   const {
@@ -36,31 +38,13 @@ const ModalComponent = (props) => {
           </p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="danger" onClick={handleClose}>
             Close
           </Button>
         </Modal.Footer>
       </Modal>
     </>
   );
-
-  // return (
-  //   <div>
-  //     <Button color="danger" onClick={handleShow} className={className}>{buttonLabel}</Button>
-  //     <Modal.Dialog show={show} onHide={handleClose}>
-  //       <Modal.Header closeButton>{title}</Modal.Header>
-  //       <Modal.Body>
-  //       <p>Description: {overview != null ? <p>{overview}</p> : "UNDEFINED"}</p>
-  //         <p className="mt-3 mb-3">Avaliação:
-  //           {vote_average}
-  //         </p>
-  //       </Modal.Body>
-  //       <Modal.Footer className="d-flex justify-content-between">
-  //         <span className="btn btn-outline-danger" onClick={handleClose}>Close</span>
-  //       </Modal.Footer>
-  //     </Modal.Dialog>}
-  //   </div>
-  // );
 }
 
 export default ModalComponent;

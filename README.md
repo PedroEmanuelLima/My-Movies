@@ -1,6 +1,6 @@
 # My-Movies:
 ### Projeto simples de listagem de fime que consome a API TMDB
-#### [video de execução](https://youtu.be/fL-XflEl3Dc)
+#### [video de execução](https://youtu.be/vGYVKtAJEDE)
 
 #
 #
